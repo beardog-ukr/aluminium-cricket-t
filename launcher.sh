@@ -12,6 +12,7 @@ function print_help_message {
   echo "Options:"
   echo "-h or --help  :   print this message and exit"
   echo "-u            :   unpack thirdpaty libs from archives"
+  echo "-s or --seed  :   will be used later for debugging purposes"
 }
 
 function unpack_thirdparty {
@@ -86,4 +87,4 @@ fi
 # ============================================================================
 # ============================================================================
 
-love --version
+love ${SCRIPT_DIR_PATH}
