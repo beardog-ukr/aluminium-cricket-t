@@ -1,49 +1,92 @@
+local defm = require("src/app_defaults")
+local ds = {}
+defm.init(ds)
+
+-- ===========================================================================
+
+local rsc = {} -- red square settigs
+rsc.kUp = "up"
+rsc.kDown = "down"
+rsc.kLeft = "left"
+rsc.kRight = "right"
+rsc.kNone = "none"
+
+rsc.dirUp = 1
+rsc.dirDown = 2
+rsc.dirLeft = 3
+rsc.dirRight = 4
+rsc.dirStay = 0
+
+-- ===========================================================================
 
 RedSquare = Object:extend()
+
+function RedSquare:drawSelf()
+  love.graphics.setColor(self.color)
+  love.graphics.rectangle("fill", self.baseX + self.x, self.baseY + self.y, 
+                          self.size, self.size)
+end
 
 function RedSquare:new(x, y)
   self.x = x or 0
   self.y = y or 0
+
+  self.baseX = x
+  self.baseY = y
+
+  self.gameAreaWidth = 50
+  self.gameAreaHeight = 50
 
   self.color = {0.8,0.1,0.1,1}
   self.size = 20
 
   self.speed = 300 -- px per second
 
-  self.direction = "none"
+  self.direction = rsc.dirStay
 end
 
 function RedSquare:processKeyPressed(keyPressed)
-  -- TODO: use constants here
-  if ("right"==keyPressed) then
-    self.direction = "right"
-  elseif ("left"==keyPressed) then
-    self.direction = "left"
-  elseif ("down"==keyPressed) then
-    self.direction = "down"
-  elseif ("up"==keyPressed) then
-    self.direction = "up"
+  if (rsc.kUp==keyPressed) then
+    self.direction = rsc.dirUp
+  elseif (rsc.kDown==keyPressed) then
+    self.direction = rsc.dirDown
+  elseif (rsc.kLeft==keyPressed) then
+    self.direction = rsc.dirLeft
+  elseif (rsc.kRight==keyPressed) then
+    self.direction = rsc.dirRight
   end
 end
 
 function RedSquare:processUpdate(diffTime)
+  if (rsc.dirStay == self.direction) then
+    return
+  end
+
   local coordinateDiff = (self.speed * diffTime)
-  if ("right"==self.direction) then
-    self.x = self.x + coordinateDiff
-  elseif ("left"==self.direction) then
-    self.x = self.x - coordinateDiff
-  elseif ("down"==self.direction) then
-    self.y = self.y + coordinateDiff
-  elseif ("up"==self.direction) then
-    self.y = self.y - coordinateDiff
-  end  
+  local newX = self.x
+  local newY = self.y
+
+  if (rsc.dirRight==self.direction) then
+    newX = self.x + coordinateDiff
+  elseif (rsc.dirLeft==self.direction) then
+    newX = self.x - coordinateDiff
+  elseif (rsc.dirDown==self.direction) then
+    newY = self.y + coordinateDiff
+  elseif (rsc.dirUp==self.direction) then
+    newY = self.y - coordinateDiff
+  end
+
+  if ((newX + self.size <= self.gameAreaWidth) and (newX >= 0) and
+      (newY + self.size <= self.gameAreaHeight) and (newY >=0)) then
+    self.x = newX
+    self.y = newY
+  end
 end
 
-function RedSquare:drawSelf()
-  love.graphics.setColor(self.color)
-  love.graphics.rectangle("fill", self.x, self.y, self.size, self.size)
-end
+function RedSquare:setGameArea(x,y, width, height)
+  self.baseX = x
+  self.baseY = y
 
-function RedSquare:boo()
-  print("boo " .. self.x)
+  self.gameAreaWidth = width
+  self.gameAreaHeight = height
 end
