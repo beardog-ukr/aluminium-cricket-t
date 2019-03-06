@@ -6,12 +6,17 @@ defm.init(ds)
 
 Object = require "thirdparty/classic-master/classic"
 
+require "src/green_square"
+local greenSquare = GreenSquare(30, 20)
+
 require "src/red_square"
 local redSquare = RedSquare(10, 20)
+
 
 -- ===========================================================================
 
 function love.keypressed(key)
+  greenSquare:processKeyPressed(key)
   redSquare:processKeyPressed(key)
 end
 
@@ -24,6 +29,9 @@ function love.load(arg)
 
   redSquare:setGameArea(ds.largeFrameSize, ds.largeFrameSize,
                         ds.gameAreaWidth, ds.gameAreaHeight)
+
+  greenSquare:setGameArea(ds.largeFrameSize, ds.largeFrameSize,
+                          ds.gameAreaWidth, ds.gameAreaHeight)
 end
 
 function love.draw()
@@ -48,9 +56,11 @@ function love.draw()
                           ds.largeFrameSize + ds.gameAreaWidth, ds.largeFrameSize,
                           ds.smallFrameSize, ds.gameAreaHeight)
   --
+  greenSquare:drawSelf()
   redSquare:drawSelf()
 end
 
 function love.update(diffTime)
+  greenSquare:processUpdate(diffTime)
   redSquare:processUpdate(diffTime)
 end
